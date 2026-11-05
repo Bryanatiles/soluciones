@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Solución compartida - Pitágoras</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+
+        :root {
+            --ink: #10233B;
+            --paper: #F6F3EA;
+            --gold: #D6A54C;
+            --line: #D8CFB8;
+            --slate: #4C6B86;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: 'IBM Plex Sans', sans-serif;
+            line-height: 1.7;
+        }
+
+        header {
+            background: var(--ink);
+            color: white;
+            padding: 22px 30px;
+        }
+
+        .logo {
+            max-width: 900px;
+            margin: auto;
+            font-family: 'Fraunces', serif;
+            font-size: 26px;
+            color: var(--gold);
+        }
+
+        main {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        h1, h2 {
+            font-family: 'Fraunces', serif;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .descripcion {
+            color: var(--slate);
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid var(--line);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .panel h2 {
+            font-size: 22px;
+            margin-top: 0;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 12px;
+        }
+
+        .contenido {
+            overflow-wrap: anywhere;
+        }
+
+        .contenido p {
+            margin: 12px 0;
+        }
+
+        .contenido pre {
+            overflow-x: auto;
+            padding: 14px;
+            background: #F6F3EA;
+        }
+
+        .contenido table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .contenido td,
+        .contenido th {
+            border: 1px solid var(--line);
+            padding: 8px;
+        }
+
+        .boton {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--ink);
+            padding: 12px 22px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .boton:hover {
+            background: #B98A38;
+        }
+
+        .error {
+            color: #9B2C2C;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--slate);
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+
+            main {
+                margin: 25px auto;
+            }
+
+            .panel {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">Pitágoras</div>
+    </header>
+
+    <main>
+
+        <h1>Solución compartida</h1>
+
+        <p class="descripcion">
+            Esta solución fue generada por el chatbot matemático de Pitágoras.
+        </p>
+
+        <div class="panel">
+
+            <h2>Ejercicio</h2>
+
+            <div id="pregunta" class="contenido"></div>
+
+        </div>
+
+        <div class="panel">
+
+            <h2>Solución paso a paso</h2>
+
+            <div id="respuesta" class="contenido"></div>
+
+        </div>
+
+        <a href="prueba.html" class="boton">
+            Ir al ChatBot
+        </a>
+
+    </main>
+
+    <footer>
+        Pitágoras — Plataforma de matemáticas
+    </footer>
+
+    <script>
+
+        function mostrarSolucion() {
+
+            const preguntaDiv = document.getElementById("pregunta");
+            const respuestaDiv = document.getElementById("respuesta");
+
+            try {
+
+                if (typeof LZString === "undefined") {
+                    throw new Error("No se cargó la biblioteca");
+                }
+
+                const hash = window.location.hash.substring(1);
+
+                if (!hash.startsWith("datos=")) {
+                    throw new Error("Enlace inválido");
+                }
+
+                const comprimido = hash.substring(6);
+
+                const texto = LZString.decompressFromEncodedURIComponent(comprimido);
+
+                if (!texto) {
+                    throw new Error("No se pudo leer la solución");
+                }
+
+                const datos = JSON.parse(texto);
+
+                if (typeof datos.pregunta !== "string" ||
+                    typeof datos.respuesta !== "string") {
+                    throw new Error("Datos inválidos");
+                }
+
+                preguntaDiv.textContent = datos.pregunta;
+
+                // Mostrar el formato de la respuesta sin ejecutar
+                // HTML recibido desde el enlace.
+                const temporal = document.createElement("div");
+                temporal.innerHTML = datos.respuesta;
+
+                const textoRespuesta = temporal.textContent || "";
+
+                respuestaDiv.style.whiteSpace = "pre-wrap";
+                respuestaDiv.textContent = textoRespuesta;
+
+            } catch (error) {
+
+                preguntaDiv.textContent = "";
+
+                respuestaDiv.textContent =
+                    "No se pudo cargar esta solución. Verifica que el enlace esté completo.";
+
+                respuestaDiv.classList.add("error");
+
+            }
+        }
+
+        mostrarSolucion();
+
+    </script>
+
+</body>
+</html>
